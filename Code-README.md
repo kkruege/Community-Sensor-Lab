@@ -1,4 +1,4 @@
-# citizen-sensors
+# Code Readme
 /*
   Real time clock & SD card from datalogger + LCD + K30 (on i2c).
   Avoiding Arduinos Leonardos because of strange choking on SD logfile.print().
