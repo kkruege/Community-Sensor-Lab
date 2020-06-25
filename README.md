@@ -7,6 +7,8 @@
  CO2 Arduino Code Explanation: A break down of the different sections of code for coding beginners
  
  Citizen Sensors-DIY CO2 How To.pdf : A step by step guide to creating your own DIY CO2 Sensor
+ 
+ Co2 Sensor Materials and Purchasing List.xlsx : Spreadsheet of all the materials and links to purchase
 
 Code-README.md : Readme for the RTC_SD_LCD_K30_v1.1.ino code
 
