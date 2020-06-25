@@ -13,3 +13,7 @@ Intro to Calibrating CO2 sensors (1).pdf : How to Calibrate the CO2 Sensor. (mos
 RTC_SD_LCD_K30_v1.1.ino : Arduino code to run the fully assembled system
 
 readCO2.ino : Simple code to read in value from the CO2 Sensor and Arduino only
+
+Contact kkrueger@gc.cuny.edu if you have any questions we'll try to answer!
+
+*/
