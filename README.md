@@ -3,6 +3,9 @@
 /*
  Welcome to our ASRC Citizen Sensors Community! We're still building this space but feel free to utilize the materials available.
  Contents:
+ 
+ CO2 Arduino Code Explanation: A break down of the different sections of code for coding beginners
+ 
  Citizen Sensors-DIY CO2 How To.pdf : A step by step guide to creating your own DIY CO2 Sensor
 
 Code-README.md : Readme for the RTC_SD_LCD_K30_v1.1.ino code
