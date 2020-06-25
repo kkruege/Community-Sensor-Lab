@@ -9,6 +9,7 @@ Code-README.md : Readme for the RTC_SD_LCD_K30_v1.1.ino code
 
 Intro to Calibrating CO2 sensors (1).pdf : How to Calibrate the CO2 Sensor. (most new sensors don't need to be calibrated, but it's a good check)
 
+Components and Assembly Curriculum : A 2 hours workshop guide to assemble and test the CO2 Sensors. (all modifications will need to be completed in the how-to guide before this)
 
 RTC_SD_LCD_K30_v1.1.ino : Arduino code to run the fully assembled system
 
