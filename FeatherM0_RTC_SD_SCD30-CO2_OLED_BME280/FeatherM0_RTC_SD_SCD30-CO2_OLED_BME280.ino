@@ -21,10 +21,26 @@
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BME280.h>
 
+#include <SPI.h>
+#include <WiFi101.h>
+#include "arduino_secrets.h"
+
 #define VBATPIN A7 // this is also D9 button A disable pullup to read analog
 #define BUTTON_A  9  // Oled button also A7 enable pullup to read button
 #define BUTTON_B  6  // oled button
 #define BUTTON_C  5  // oled button
+
+
+char ssid[] = SECRET_SSID;        // your network SSID (name)
+char pass[] = SECRET_PASS;    // your network password (use for WPA, or use as key for WEP)
+int keyIndex = 0;            // your network key Index number (needed only for WEP)
+int status = WL_IDLE_STATUS;
+char server[] = "script.google.com";    // name address for Google scripts as we are communicationg with the scripg (using DNS)
+
+WiFiSSLClient client; // make SSL client
+// these are the commands to be sent to the google script: namely add a row to last in Sheet1 with the values TBD
+String payload_base =  "{\"command\":\"appendRow\",\"sheet_name\":\"Sheet1\",\"values\":";
+String payload = "";
 
 RTC_PCF8523 rtc; // Real Time Clock for RevB Adafruit logger shield
 Adafruit_SSD1306 display = Adafruit_SSD1306(128, 32, &Wire); // the oled display
@@ -34,7 +50,9 @@ SCD30 airSensor; // sensirion scd30 ndir
 const int SD_CS = 10; // Chip select for SD card default for Adalogger
 uint8_t stat = 0; // status byte
 
+
 void setup(void) {
+  WiFi.setPins(8, 7, 4, 2); 
   Serial.begin(9600);
   delay(5000);
   Serial.println(__FILE__);
@@ -45,6 +63,9 @@ void setup(void) {
   pinMode(VBATPIN, INPUT);
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, LOW);
+
+  wifiSetup();
+  payloadUpload();
 
   pinMode(SD_CS, OUTPUT); // set chip select for SD
   digitalWrite(SD_CS, LOW);
@@ -62,7 +83,7 @@ void setup(void) {
 //    rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
 
   initializeBME();
-  initializeAirSensor();
+  initializeAirSensor();  
 
   delay(2000);
   Serial.println("Date______\tTime____\tCO2ppm\tTempC\tRH%\tTempC\tP_mBar\tRH%\tVbatMV\tstatus");
@@ -78,6 +99,21 @@ int timeDebounce = 100;
 
 void loop(void)  {
 
+  while (client.available()) {
+    char c = client.read();
+    Serial.write(c);
+  }
+
+  // if the server's disconnected, stop the client:
+  if (!client.connected()) {
+    Serial.println();
+    Serial.println("disconnecting from server.");
+    client.stop();
+
+    // do nothing forevermore:
+    while (true);
+  }
+
   uint8_t ctr = 0;
   stat = stat & 0xEF; // clear bit 4
 
@@ -91,6 +127,8 @@ void loop(void)  {
   // wait for data avail on CO2 sensor
   while (!airSensor.dataAvailable()) {
     delay(1000);
+    
+ 
     if (ctr > 31) {  // timeout is 31s
       stat = stat | 0x10; // set bit 4 timeout
       break;
@@ -102,6 +140,7 @@ void loop(void)  {
   digitalWrite(LED_BUILTIN, HIGH);
   // read SCD30
   uint16_t co2 = airSensor.getCO2();
+  //ppmvalue = airSensor.getCO2();
   float temp = airSensor.getTemperature();
   float rh = airSensor.getHumidity();
   digitalWrite(LED_BUILTIN, LOW);
