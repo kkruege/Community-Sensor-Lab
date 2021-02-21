@@ -2,8 +2,7 @@
 Write to Google Sheets through a Wifi POST HTTP1.1 request to a Google script.
 */
 void payloadUpload(){
-  
-  payload = payload_base + "\"" + 44444 + "," + 22222 + "\"}";
+  payload = payload_base + "\"" + T + "," + P + "," + H + "\"}";
 
   Serial.printf("\npayload: %s\n", payload.c_str());
   Serial.println(payload);
@@ -20,4 +19,11 @@ void payloadUpload(){
   client.println();
 
   Serial.printf("\n Response \n\n");
+  client.stop();
+  if (!client.connected()) {
+    Serial.println();
+    Serial.println("disconnecting from server.");
+    
+  }
+
   }

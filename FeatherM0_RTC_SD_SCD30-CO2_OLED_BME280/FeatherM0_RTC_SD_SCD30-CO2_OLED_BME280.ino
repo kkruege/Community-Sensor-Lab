@@ -36,6 +36,11 @@ char pass[] = SECRET_PASS;    // your network password (use for WPA, or use as k
 int keyIndex = 0;            // your network key Index number (needed only for WEP)
 int status = WL_IDLE_STATUS;
 char server[] = "script.google.com";    // name address for Google scripts as we are communicationg with the scripg (using DNS)
+int loopCount = 0;
+float C; // CO2
+float T; // temperature
+float P; // pressure
+float H; // humidity
 
 WiFiSSLClient client; // make SSL client
 // these are the commands to be sent to the google script: namely add a row to last in Sheet1 with the values TBD
@@ -49,7 +54,7 @@ File logfile;  // the logging file
 SCD30 airSensor; // sensirion scd30 ndir
 const int SD_CS = 10; // Chip select for SD card default for Adalogger
 uint8_t stat = 0; // status byte
-
+uint16_t co2;
 
 void setup(void) {
   WiFi.setPins(8, 7, 4, 2); 
@@ -80,7 +85,7 @@ void setup(void) {
   else
     Serial.println("RTC ok");
   // run once to syncro then run again with commented out
-//    rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+  // rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
 
   initializeBME();
   initializeAirSensor();  
@@ -88,6 +93,7 @@ void setup(void) {
   delay(2000);
   Serial.println("Date______\tTime____\tCO2ppm\tTempC\tRH%\tTempC\tP_mBar\tRH%\tVbatMV\tstatus");
   logfile.println("Date______\tTime____\tCO2ppm\tTempC\tRH%\tTempC\tP_mBar\tRH%\tVbatMV\tstatus");
+  
 }
 
 char outstr[100];
@@ -103,24 +109,14 @@ void loop(void)  {
     char c = client.read();
     Serial.write(c);
   }
-
-  // if the server's disconnected, stop the client:
-  if (!client.connected()) {
-    Serial.println();
-    Serial.println("disconnecting from server.");
-    client.stop();
-
-    // do nothing forevermore:
-    while (true);
-  }
-
+  loopCount++;
   uint8_t ctr = 0;
   stat = stat & 0xEF; // clear bit 4
 
   // read BME
-  float T = bme.readTemperature();
-  float P = bme.readPressure() / 100; // for hPa
-  float H = bme.readHumidity();
+  T = bme.readTemperature();
+  P = bme.readPressure() / 100; // for hPa
+  H = bme.readHumidity();
   
   airSensor.setAmbientPressure(P); // update CO2 sensor to current pressure
 
@@ -145,6 +141,12 @@ void loop(void)  {
   float rh = airSensor.getHumidity();
   digitalWrite(LED_BUILTIN, LOW);
 
+  //client must disconnect in order to make a new post request
+  if (!client.connected()) {
+    wifiSetup();
+    payloadUpload();
+  }
+  
   DateTime now;
   now = rtc.now(); // fetch the date + time
 
@@ -159,6 +161,7 @@ void loop(void)  {
   Serial.println(outstr);
   logfile.println(outstr);
   logfile.flush();   // Write to disk. Uses 2048 bytes of I/O to SD card, power and takes time
+  
 
   for (int i = 1; i <= 2; i++)  {  // 32s =2x16s sleep
     displayState = toggleButton(BUTTON_A, displayState, buttonAstate, lastTimeToggle, timeDebounce);
