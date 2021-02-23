@@ -2,7 +2,7 @@
 Write to Google Sheets through a Wifi POST HTTP1.1 request to a Google script.
 */
 void payloadUpload(){
-  payload = payload_base + "\"" + T + "," + P + "," + H + "\"}";
+  payload = payload_base + "\"" + T + "," + P + "," + H + "," + C + "\"}";
 
   Serial.printf("\npayload: %s\n", payload.c_str());
   Serial.println(payload);

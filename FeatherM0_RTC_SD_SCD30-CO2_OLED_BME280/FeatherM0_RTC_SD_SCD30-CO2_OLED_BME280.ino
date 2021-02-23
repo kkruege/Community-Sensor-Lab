@@ -136,6 +136,7 @@ void loop(void)  {
   digitalWrite(LED_BUILTIN, HIGH);
   // read SCD30
   uint16_t co2 = airSensor.getCO2();
+  C = co2;
   //ppmvalue = airSensor.getCO2();
   float temp = airSensor.getTemperature();
   float rh = airSensor.getHumidity();
