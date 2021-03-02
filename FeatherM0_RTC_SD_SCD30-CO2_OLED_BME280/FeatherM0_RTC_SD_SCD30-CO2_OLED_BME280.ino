@@ -9,7 +9,6 @@
    RICARDO TOLEDO-CROW NGENS, ESI, ASRC, CUNY, SEPTEMBER 2020
 
 */
-
 #include <SPI.h>
 #include <SD.h>
 #include <Wire.h>
@@ -69,8 +68,6 @@ void setup(void) {
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, LOW);
 
-  wifiSetup();
-  payloadUpload();
 
   pinMode(SD_CS, OUTPUT); // set chip select for SD
   digitalWrite(SD_CS, LOW);
