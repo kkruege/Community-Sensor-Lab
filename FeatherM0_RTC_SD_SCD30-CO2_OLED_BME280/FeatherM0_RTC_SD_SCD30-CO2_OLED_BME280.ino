@@ -70,6 +70,7 @@ void setup(void) {
 
   initializeOLED();
   delay(5000);
+  wifiSetup();
 
   pinMode(VBATPIN, INPUT);
   pinMode(LED_BUILTIN, OUTPUT);
@@ -148,7 +149,7 @@ void loop(void)  {
 
   //client must disconnect in order to make a new post request
   if (!client.connected()) {
-    wifiSetup();
+    initializeClient();
     payloadUpload();
   }
   
@@ -191,6 +192,6 @@ void loop(void)  {
       display.display();
     }
     //int sleepMS = Watchdog.sleep();// remove comment after final push
-    //delay(16000);
+    delay(16000);
   }
 }
