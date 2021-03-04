@@ -39,7 +39,14 @@ int loopCount = 0;
 float C; // CO2
 float T; // temperature
 float P; // pressure
-float H; // humidity
+float H; // humidityint year;
+int month;
+int year;
+int day;
+int hour;
+int minute;
+int second;
+//unsigned int unsignedyr;
 
 WiFiSSLClient client; // make SSL client
 // these are the commands to be sent to the google script: namely add a row to last in Sheet1 with the values TBD
@@ -147,6 +154,12 @@ void loop(void)  {
   
   DateTime now;
   now = rtc.now(); // fetch the date + time
+  year = now.year();
+  month = now.month();
+  day = now.day();
+  hour = now.hour();
+  minute = now.minute();
+  second = now.second();
 
   pinMode(VBATPIN, INPUT);
   float measuredvbat = analogRead(VBATPIN) * 0.006445;
@@ -177,7 +190,7 @@ void loop(void)  {
       display.clearDisplay();
       display.display();
     }
-    int sleepMS = Watchdog.sleep();
-//        delay(16000);
+    //int sleepMS = Watchdog.sleep();// remove comment after final push
+    //delay(16000);
   }
 }
