@@ -1,3 +1,5 @@
+// Adafruit BME280 T P RH sensor
+
 void initializeBME()  {
   unsigned status = bme.begin();
   // You can also pass in a Wire library object like &Wire2
